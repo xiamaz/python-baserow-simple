@@ -1,4 +1,4 @@
-"""Python setup.py for project_name package"""
+"""Python setup.py for python_baserow_simple package"""
 import io
 import os
 from setuptools import find_packages, setup
@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 def read(*paths, **kwargs):
     """Read the contents of a text file safely.
-    >>> read("project_name", "VERSION")
+    >>> read("python_baserow_simple", "VERSION")
     '0.1.0'
     >>> read("README.md")
     ...
@@ -30,17 +30,17 @@ def read_requirements(path):
 
 
 setup(
-    name="project_name",
-    version=read("project_name", "VERSION"),
-    description="project_description",
-    url="https://github.com/author_name/project_urlname/",
+    name="python_baserow_simple",
+    version=read("python_baserow_simple", "VERSION"),
+    description="Awesome python_baserow_simple created by xiamaz",
+    url="https://github.com/xiamaz/python-baserow-simple/",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    author="author_name",
+    author="xiamaz",
     packages=find_packages(exclude=["tests", ".github"]),
     install_requires=read_requirements("requirements.txt"),
     entry_points={
-        "console_scripts": ["project_name = project_name.__main__:main"]
+        "console_scripts": ["python_baserow_simple = python_baserow_simple.__main__:main"]
     },
     extras_require={"test": read_requirements("requirements-test.txt")},
 )

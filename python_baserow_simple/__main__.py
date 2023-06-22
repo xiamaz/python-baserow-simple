@@ -1,4 +1,4 @@
-"""Entry point for project_name."""
+"""Entry point for python_baserow_simple."""
 
 from .cli import main  # pragma: no cover
 
