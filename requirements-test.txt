@@ -9,3 +9,6 @@ codecov
 mypy
 gitchangelog
 mkdocs
+pyright
+ipython
+types-requests
