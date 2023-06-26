@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import List
 
 import requests
 
@@ -46,6 +47,34 @@ class BaserowApi:
         )
         resp.raise_for_status()
 
+    def _update_rows(self, table_id, datas):
+        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"
+        resp = requests.patch(
+            url, headers={
+                "Authorization": f"Token {self._token}",
+                "Content-Type": "application/json",
+            },
+            json=datas
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        ids = [e["id"] for e in data["items"]]
+        return ids
+
+    def _create_rows(self, table_id, datas):
+        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"
+        resp = requests.post(
+            url, headers={
+                "Authorization": f"Token {self._token}",
+                "Content-Type": "application/json",
+            },
+            json=datas
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        ids = [e["id"] for e in data["items"]]
+        return ids
+
     def _convert_selects(self, data, fields):
         data_conv = deepcopy(data)
 
@@ -89,6 +118,21 @@ class BaserowApi:
             row_id = self._create_row(table_id, data_conv)
 
         return row_id
+
+    def add_data_batch(self, table_id, entries):
+        """Add multiple entries."""
+        entries_update = []
+        entries_new = []
+        for entry in entries:
+            if entry.get("id") is not None:
+                entries_update.append(entry)
+            else:
+                entries_new.append(entry)
+
+        if entries_new:
+            self._create_rows(table_id, entries_update)
+        if entries_update:
+            self._update_rows(table_id, entries_new)
 
 
 def load_token(token_path):
