@@ -54,7 +54,7 @@ class BaserowApi:
                 "Authorization": f"Token {self._token}",
                 "Content-Type": "application/json",
             },
-            json=datas
+            json={"items": datas},
         )
         resp.raise_for_status()
         data = resp.json()
@@ -68,7 +68,7 @@ class BaserowApi:
                 "Authorization": f"Token {self._token}",
                 "Content-Type": "application/json",
             },
-            json=datas
+            json={"items": datas},
         )
         resp.raise_for_status()
         data = resp.json()
@@ -130,9 +130,9 @@ class BaserowApi:
                 entries_new.append(entry)
 
         if entries_new:
-            self._create_rows(table_id, entries_update)
+            self._create_rows(table_id, entries_new)
         if entries_update:
-            self._update_rows(table_id, entries_new)
+            self._update_rows(table_id, entries_update)
 
 
 def load_token(token_path):
