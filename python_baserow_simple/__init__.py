@@ -1,5 +1,4 @@
 from copy import deepcopy
-from typing import List
 
 import requests
 
@@ -48,9 +47,10 @@ class BaserowApi:
         resp.raise_for_status()
 
     def _update_rows(self, table_id, datas):
-        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"
+        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"  # noqa: E501
         resp = requests.patch(
-            url, headers={
+            url,
+            headers={
                 "Authorization": f"Token {self._token}",
                 "Content-Type": "application/json",
             },
@@ -62,9 +62,10 @@ class BaserowApi:
         return ids
 
     def _create_rows(self, table_id, datas):
-        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"
+        url = f"https://phenotips.charite.de/api/database/rows/table/{table_id}/batch/?user_field_names=true"  # noqa: E501
         resp = requests.post(
-            url, headers={
+            url,
+            headers={
                 "Authorization": f"Token {self._token}",
                 "Content-Type": "application/json",
             },
