@@ -1,4 +1,6 @@
 from copy import deepcopy
+from typing import Any, Dict
+
 import requests
 
 
@@ -26,6 +28,7 @@ def format_value(raw_value, field_info):
     else:
         return raw_value
 
+
 class BaserowApi:
     table_path = "api/database/rows/table"
     fields_path = "api/database/fields/table"
@@ -36,7 +39,7 @@ class BaserowApi:
             self._token = load_token(token_path)
         if token:
             self._token = token
-        self._fields = {}
+        self._fields: Dict[int, Any] = {}
 
     def _get_fields(self, table_id):
         get_fields_url = f"{self._database_url}/{self.fields_path}/{table_id}/"
@@ -143,7 +146,9 @@ class BaserowApi:
         return data_conv
 
     def _get_data(self, url):
-        resp = requests.get(url, headers={"Authorization": f"Token {self._token}"})
+        resp = requests.get(
+            url, headers={"Authorization": f"Token {self._token}"}
+        )
         data = resp.json()
 
         if "results" not in data:
@@ -160,15 +165,14 @@ class BaserowApi:
 
     def writable_fields(self, table_id):
         fields = self.get_fields(table_id)
-        writable_fields = [
-            field for field in fields if not field["read_only"]
-        ]
+        writable_fields = [field for field in fields if not field["read_only"]]
         return writable_fields
 
-    def get_data(self, table_id, writable_only = True):
+    def get_data(self, table_id, writable_only=True):
         """Get all data in a table.
 
-        writable_only - Only return fields which can be written to. This excludes all formula and computed fields.
+        writable_only - Only return fields which can be written to. This
+        excludes all formula and computed fields.
         """
         if writable_only:
             fields = self.writable_fields(table_id)
@@ -176,9 +180,7 @@ class BaserowApi:
             fields = self.get_fields(table_id)
         names = {f["name"]: f for f in fields}
         get_data_url = f"{self._database_url}/{self.table_path}/{table_id}/?user_field_names=true"  # noqa: E501
-        data = self._get_data(
-            get_data_url
-        )
+        data = self._get_data(get_data_url)
 
         writable_data = {
             d["id"]: {
