@@ -4,6 +4,12 @@ Changelog
 
 (unreleased)
 ------------
+- Refactoring. [Max Zhao]
+
+
+0.0.3 (2023-06-26)
+------------------
+- Release: version 0.0.3 🚀 [Max Zhao]
 - Fix formatting issues. [Max Zhao]
 - Fix batch update. [Max Zhao]
 - Add batch updates. [Max Zhao]
