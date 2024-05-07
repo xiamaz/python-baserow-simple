@@ -145,18 +145,21 @@ class BaserowApi:
                     data_conv[field["name"]] = new_value
         return data_conv
 
-    def _get_data(self, url):
+    def _get_data(self, url, paginated=True):
         resp = requests.get(
             url, headers={"Authorization": f"Token {self._token}"}
         )
         data = resp.json()
 
-        if "results" not in data:
-            raise RuntimeError(f"Could not get data from {url}")
+        if paginated:
+            if "results" not in data:
+                raise RuntimeError(f"Could not get data from {url}")
 
-        if data["next"]:
-            return data["results"] + self._get_data(data["next"])
-        return data["results"]
+            if data["next"]:
+                return data["results"] + self._get_data(data["next"])
+            return data["results"]
+        else:
+            return data
 
     def get_fields(self, table_id):
         if table_id not in self._fields:
@@ -193,6 +196,29 @@ class BaserowApi:
 
         return writable_data
 
+    def get_entry(self, table_id, entry_id, linked=False, seen_tables=None):
+        get_entry_url = f"{self._database_url}/{self.table_path}/{table_id}/{entry_id}/?user_field_names=true"  # noqa: E501
+        data = self._get_data(get_entry_url, paginated=False)
+        fields = self.get_fields(table_id)
+        names = {f["name"]: f for f in fields}
+        formatted_data = {k: format_value(v, names[k]) for k, v in data.items() if k in names}
+
+        seen_tables_next = seen_tables or []
+        seen_tables_next.append(table_id)
+
+        # fully hydrate with linked data
+        if linked:
+            link_fields = [f for f in fields if f["type"] == "link_row"]
+            for field in link_fields:
+                linked_table_id = field["link_row_table_id"]
+                if not seen_tables or linked_table_id not in seen_tables:
+                    if ids := data.get(field["name"]):
+                        formatted_data[field["name"]] = [
+                            self.get_entry(linked_table_id, e_id["id"], linked=False, seen_tables=seen_tables_next)for e_id in ids
+                        ]
+
+        return formatted_data
+
     def add_data(self, table_id, data, row_id=None) -> int:
         fields = self.get_fields(table_id)
         data_conv = self._convert_selects(data, fields)
@@ -213,7 +239,15 @@ class BaserowApi:
             else:
                 entries_new.append(entry)
 
+        errors = []
         if entries_new:
-            self._create_rows(table_id, entries_new)
+            try:
+                self._create_rows(table_id, entries_new)
+            except requests.HTTPError as err:
+                errors.append(err.response.text)
         if entries_update:
-            self._update_rows(table_id, entries_update)
+            try:
+                self._update_rows(table_id, entries_update)
+            except requests.HTTPError as err:
+                errors.append(err.response.text)
+        return errors
