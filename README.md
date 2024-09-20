@@ -1,13 +1,9 @@
-
 # python-baserow-simple
 
 This is a simple baserow API wrapper, that mainly does two things:
 
 - return rows with column names and selections with their labels
 - easier batch-updates accepting both existing and new rows
-
-[![codecov](https://codecov.io/gh/xiamaz/python-baserow-simple/branch/main/graph/badge.svg?token=python-baserow-simple_token_here)](https://codecov.io/gh/xiamaz/python-baserow-simple)
-[![CI](https://github.com/xiamaz/python-baserow-simple/actions/workflows/main.yml/badge.svg)](https://github.com/xiamaz/python-baserow-simple/actions/workflows/main.yml)
 
 ## Install it from PyPI
 
