@@ -244,10 +244,10 @@ class BaserowApi:
             try:
                 self._create_rows(table_id, entries_new)
             except requests.HTTPError as err:
-                errors.append(err.response.text)
+                errors.append(f"Create rows ({len(entries_new)}): " + err.response.text)
         if entries_update:
             try:
                 self._update_rows(table_id, entries_update)
             except requests.HTTPError as err:
-                errors.append(err.response.text)
+                errors.append(f"Update rows ({len(entries_update)}): " + err.response.text)
         return errors
